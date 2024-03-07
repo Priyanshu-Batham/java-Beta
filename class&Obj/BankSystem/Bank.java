@@ -42,7 +42,7 @@ class Current implements Operations {
     }
 }
 
-class Saving {
+class Saving implements Operations {
     static int idCreater = 0;
     private int id;
     private float balance;
@@ -159,7 +159,7 @@ class AccountHandler {
         }
     }
 
-    void withdrawl(int id, float amount){
+    float withdrawl(int id, float amount){
         float res = -1;
         for(Current account: currentAccounts){
             if(account.getId() == id){
@@ -174,8 +174,9 @@ class AccountHandler {
         if(res != -1){
             System.out.println("Transaction Completed");
             System.out.println("Your Balance: " + res);
+	    return res;
         }
-        
+	return res;
     }
 
     float getBalance(int id) {
@@ -237,11 +238,25 @@ class Bank {
             if(accountHandler.closeCurrentAccount(id) == 1 || accountHandler.closeSavingAccount(id) == 1){
                 System.out.println("Account Deleted Successfully");
             }
+	    else{
+	      System.out.println("Account Not Found");
+	    }
         }
         else if(choice == 3){
-            //Here make use of withdrawl and deposit functions
             System.out.println("Enter the id of your account");
             int id = Integer.parseInt(br.readLine());
+	    boolean flag = false;
+	    for(Current account: accountHandler.currentAccounts){
+	      if(account.getId() == id) flag = true;
+            }
+	    for(Saving account: accountHandler.savingAccounts){
+	      if(account.getId() == id) flag = true;
+            }
+            
+	    if(flag == false){
+	      System.out.println("Account not Found");
+	      return;
+	    }
 
             System.out.println("1: Deposit");
             System.out.println("2: Withdrawl");
@@ -258,7 +273,8 @@ class Bank {
             else if(opr == 2){
                 System.out.println("Enter the amount to withdrawl: ");
                 float amount = Float.parseFloat(br.readLine());
-                accountHandler.withdrawl(id, amount);
+	        float res = accountHandler.withdrawl(id, amount);
+                if(res == -1) System.out.println("Insufficient Balance");
             }
 
             else if(opr == 3){
