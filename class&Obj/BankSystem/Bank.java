@@ -1,4 +1,3 @@
-// utilize withdrawl and deposit functions from line 204
 import java.io.*;
 import java.util.ArrayList;
 
@@ -141,6 +140,44 @@ class AccountHandler {
         return -1;
     }
 
+    void deposit(int id, float amount){
+        float res = -1;
+        for(Current account: currentAccounts){
+            if(account.getId() == id){
+                res = account.deposit(amount);
+            }
+        }
+        for(Saving account : savingAccounts){
+            if(account.getId() == id){
+                res = account.deposit(amount);
+            }
+        }
+        if(res == -1) System.out.println("Transaction Failed");
+        else{
+            System.out.println("Transaction Completed");
+            System.out.println("Your Balance: " + res);
+        }
+    }
+
+    void withdrawl(int id, float amount){
+        float res = -1;
+        for(Current account: currentAccounts){
+            if(account.getId() == id){
+                res = account.withdrawl(amount);
+            }
+        }
+        for(Saving account: savingAccounts){
+            if(account.getId() == id){
+                res = account.withdrawl(amount);
+            }
+        }
+        if(res != -1){
+            System.out.println("Transaction Completed");
+            System.out.println("Your Balance: " + res);
+        }
+        
+    }
+
     float getBalance(int id) {
         for (Current account : currentAccounts) {
             if (account.getId() == id)
@@ -205,9 +242,30 @@ class Bank {
             //Here make use of withdrawl and deposit functions
             System.out.println("Enter the id of your account");
             int id = Integer.parseInt(br.readLine());
-            float balance = accountHandler.getBalance(id);
-            if(balance == -1) System.out.println("Error Occured");
-            else System.out.println("Available Balance: " + balance);
+
+            System.out.println("1: Deposit");
+            System.out.println("2: Withdrawl");
+            System.out.println("3: Check Balance");
+            System.out.println("Choose: ");
+            int opr = Integer.parseInt(br.readLine());
+
+            if(opr == 1){
+                System.out.println("Enter the amount to deposit: ");
+                float amount = Float.parseFloat(br.readLine());
+                accountHandler.deposit(id, amount);
+            }
+
+            else if(opr == 2){
+                System.out.println("Enter the amount to withdrawl: ");
+                float amount = Float.parseFloat(br.readLine());
+                accountHandler.withdrawl(id, amount);
+            }
+
+            else if(opr == 3){
+                float res = accountHandler.getBalance(id);
+                if(res != -1) System.out.println("Your balance: " + res);
+                else System.out.println("Account Not Found");
+            }
         }
         else{
             System.out.println("Input valid Choice");
